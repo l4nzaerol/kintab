@@ -1,12 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./components/Login";  // Import Login component
-import Register from "./components/Register"; // Import Register component
-import Dashboard from "./components/Dashboard"; // Import Dashboard component
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Dashboard from "./components/Dashboard";
 
-const isAuthenticated = () => {
-    return !!localStorage.getItem("token"); // Check if token exists
-};
+const isAuthenticated = () => !!localStorage.getItem("token");
+const getUserRole = () => localStorage.getItem("role");
 
 function App() {
     return (
@@ -16,10 +15,16 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
 
-                {/* Protected Route for Dashboard */}
+                {/* Protected Route for Dashboard with Role-Based Content */}
                 <Route
                     path="/dashboard"
-                    element={isAuthenticated() ? <Dashboard /> : <Navigate to="/login" />}
+                    element={
+                        isAuthenticated() ? (
+                            <Dashboard role={getUserRole()} />
+                        ) : (
+                            <Navigate to="/login" />
+                        )
+                    }
                 />
 
                 {/* Redirect unknown routes to login */}

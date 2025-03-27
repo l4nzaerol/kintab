@@ -20,7 +20,8 @@ const Login = () => {
             
             // Store only the token and username in localStorage
             localStorage.setItem("token", response.data.token);
-            localStorage.setItem("username", response.data.user.name); 
+            localStorage.setItem("username", response.data.user.name);
+            localStorage.setItem("role", response.data.user.role);  
     
             navigate("/dashboard");
         } catch (err) {
