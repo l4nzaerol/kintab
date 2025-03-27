@@ -51,9 +51,11 @@ const CustomerDashboard = () => (
         <h3>Customer Dashboard</h3>
         <ul>
             <li>View Products</li>
-            <li>Manage Cart</li>
-            <li>Track Orders</li>
-            <li>Update Profile</li>
+            <li>Search for products</li>
+            <li>Add items to Cart</li>
+            <li>Checkout Process</li>
+            <li>View Order Summary Before Checkout</li>
+            <li>Validations rule that customers cannot add items to cart or check out if not registered</li>
         </ul>
     </div>
 );
@@ -62,10 +64,9 @@ const EmployeeDashboard = () => (
     <div>
         <h3>Employee Dashboard</h3>
         <ul>
-            <li>Manage Inventory</li>
-            <li>Process Orders</li>
-            <li>View Customer Inquiries</li>
-            <li>Update Order Status</li>
+            <li>Manage Product(CRUD)</li>
+            <li>View and monitor checkout transactions</li>
+            
         </ul>
     </div>
 );
