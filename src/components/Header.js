@@ -20,9 +20,13 @@ const Header = ({ cartCount }) => {
                 <p>Welcome, {username} ({role})</p>
                 <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
             </div>
-            <div style={styles.cart}>
-                <span style={styles.cartCount}>{cartCount}</span>
-            </div>
+            
+            {/* Show cart only for customers */}
+            {role === "customer" && cartCount > 0 && (
+                <div style={styles.cart}>
+                    <span style={styles.cartCount}>{cartCount}</span>
+                </div>
+            )}
         </header>
     );
 };
