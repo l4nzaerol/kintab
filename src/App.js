@@ -5,7 +5,6 @@ import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
 
 const isAuthenticated = () => !!localStorage.getItem("token");
-const getUserRole = () => localStorage.getItem("role");
 
 function App() {
     return (
@@ -15,16 +14,10 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
 
-                {/* Protected Route for Dashboard with Role-Based Content */}
+                {/* Protected Route for Dashboard */}
                 <Route
                     path="/dashboard"
-                    element={
-                        isAuthenticated() ? (
-                            <Dashboard role={getUserRole()} />
-                        ) : (
-                            <Navigate to="/login" />
-                        )
-                    }
+                    element={isAuthenticated() ? <Dashboard /> : <Navigate to="/login" />}
                 />
 
                 {/* Redirect unknown routes to login */}
