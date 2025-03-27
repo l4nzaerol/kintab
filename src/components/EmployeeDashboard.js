@@ -19,19 +19,13 @@ const EmployeeDashboard = () => {
         setLoading(true);
         const token = localStorage.getItem("token");
         try {
-            const response = await axios.post("http://localhost:8000/api/products", newProduct, {
+            await axios.post("http://localhost:8000/api/products", newProduct, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-    
-            alert("Product added successfully!"); // Notify user
-            setShowAddModal(false); // Close modal
+            setShowAddModal(false);
             setNewProduct({ name: "", description: "", price: "", stock: "", image: "" });
-    
-            // Refresh products list (if ProductsTable is managing state, use a function to update it instead)
-            window.location.reload(); 
         } catch (error) {
             console.error("Error adding product:", error);
-            alert(error.response?.data?.message || "Failed to add product. Check input values.");
         } finally {
             setLoading(false);
         }
