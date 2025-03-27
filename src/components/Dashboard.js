@@ -31,7 +31,6 @@ const Dashboard = () => {
 
             <main>
                 <h2>Welcome, {user.username || "Loading..."}</h2>
-                <p>Role: {user.role || "Loading..."}</p>
 
                 {user.role === "employee" ? (
                     <EmployeeDashboard />
