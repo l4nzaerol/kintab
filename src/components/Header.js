@@ -26,7 +26,7 @@ const Header = () => {
         };
 
         // Fetch cart count every 0.5 seconds
-        const interval = setInterval(fetchCartCount, 500);
+        const interval = setInterval(fetchCartCount, 1000);
 
         return () => clearInterval(interval); // Cleanup on unmount
     }, []);

@@ -42,13 +42,21 @@ const EmployeeProductsTable = () => {
     const confirmDelete = async () => {
         const token = localStorage.getItem("token");
         try {
-            await axios.delete(`http://localhost:8000/api/products/${deleteId}`, {
+            const response = await axios.delete(`http://localhost:8000/api/products/${deleteId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
+            alert(response.data.message); // Show success message
             setProducts(products.filter((product) => product.id !== deleteId));
             setShowDeleteModal(false);
         } catch (error) {
-            console.error("Error deleting product:", error);
+            console.error("Error deleting product:", error.response?.data || error.message);
+    
+            // 🔥 Show error message from Laravel
+            if (error.response && error.response.data.message) {
+                alert(error.response.data.message); // Display error as an alert
+            } else {
+                alert("An error occurred while deleting the product.");
+            }
         }
     };
 
@@ -106,28 +114,28 @@ const EmployeeProductsTable = () => {
             )}
             {/* Edit Modal */}
             {showEditModal && (
-                <div className="modal show d-block" tabIndex="-1">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">Edit Product</h5>
-                                <button type="button" className="btn-close" onClick={() => setShowEditModal(false)}></button>
-                            </div>
-                            <div className="modal-body">
-                                <input type="text" className="form-control mb-2" name="name" value={formData.name} onChange={handleInputChange} placeholder="Name" />
-                                <input type="text" className="form-control mb-2" name="description" value={formData.description} onChange={handleInputChange} placeholder="Description" />
-                                <input type="number" className="form-control mb-2" name="price" value={formData.price} onChange={handleInputChange} placeholder="Price" />
-                                <input type="number" className="form-control mb-2" name="stock" value={formData.stock} onChange={handleInputChange} placeholder="Stock" />
-                                <input type="text" className="form-control mb-2" name="image" value={formData.image} onChange={handleInputChange} placeholder="Image URL" />
-                            </div>
-                            <div className="modal-footer">
-                                <button className="btn btn-secondary" onClick={() => setShowEditModal(false)}>Cancel</button>
-                                <button className="btn btn-primary" onClick={handleSave}>Save</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+                 <div className="modal show d-block" tabIndex="-1">
+                     <div className="modal-dialog">
+                         <div className="modal-content">
+                             <div className="modal-header">
+                                 <h5 className="modal-title">Edit Product</h5>
+                                 <button type="button" className="btn-close" onClick={() => setShowEditModal(false)}></button>
+                             </div>
+                             <div className="modal-body">
+                                 <input type="text" className="form-control mb-2" name="name" value={formData.name} onChange={handleInputChange} placeholder="Name" />
+                                 <input type="text" className="form-control mb-2" name="description" value={formData.description} onChange={handleInputChange} placeholder="Description" />
+                                 <input type="number" className="form-control mb-2" name="price" value={formData.price} onChange={handleInputChange} placeholder="Price" />
+                                 <input type="number" className="form-control mb-2" name="stock" value={formData.stock} onChange={handleInputChange} placeholder="Stock" />
+                                 <input type="text" className="form-control mb-2" name="image" value={formData.image} onChange={handleInputChange} placeholder="Image URL" />
+                             </div>
+                             <div className="modal-footer">
+                                 <button className="btn btn-secondary" onClick={() => setShowEditModal(false)}>Cancel</button>
+                                 <button className="btn btn-primary" onClick={handleSave}>Save</button>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             )}
             {/* Delete Confirmation Modal */}
             {showDeleteModal && (
                 <div className="modal show d-block" tabIndex="-1">
