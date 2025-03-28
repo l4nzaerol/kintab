@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
-import Cart from "./components/Cart"; // Make sure Cart.js exists and is correctly imported
+import Cart from "./components/Customer/Cart"; // Make sure Cart.js exists and is correctly imported
 
 const isAuthenticated = () => !!localStorage.getItem("token");
 

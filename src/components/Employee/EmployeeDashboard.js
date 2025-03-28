@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import ProductsTable from "./EmployeeProductsTable";
+import EmployeeProductsTable from "./EmployeeProductsTable";
 import OrdersTable from "./OrdersTable";
 import axios from "axios";
 
@@ -48,7 +48,7 @@ const EmployeeDashboard = () => {
                 </button>
             </div>
             <div className="card p-3">
-                {view === "products" ? <ProductsTable /> : <OrdersTable />}
+                {view === "products" ? <EmployeeProductsTable /> : <OrdersTable />}
             </div>
 
             {/* Add Product Modal */}

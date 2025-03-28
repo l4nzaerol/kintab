@@ -2,12 +2,11 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import CartTable from "./CartTable";
-import OrderTable from "./OrderTable";
+import OrderTable from "../OrderTable";
 
 const Cart = () => {
     const [view, setView] = useState("cart");
     const [showSummary, setShowSummary] = useState(false);
-    const [checkoutStep, setCheckoutStep] = useState(1);
     const navigate = useNavigate();
 
     const handleCheckout = async () => {
