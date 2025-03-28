@@ -134,7 +134,7 @@ const OrdersTable = () => {
                         {filteredOrders.map((order) => (
                             <tr key={order.id} onClick={() => handleRowClick(order)} style={{ cursor: "pointer" }}>
                                 <td>{order.id}</td>
-                                <td>${order.total_price}</td>
+                                <td>₱{order.total_price}</td>
                                 <td>{order.checkout_date ? new Date(order.checkout_date).toLocaleString() : "N/A"}</td>
                                 <td>{order.status}</td>
                                 <td>

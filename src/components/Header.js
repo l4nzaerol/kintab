@@ -1,10 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const Header = ({ cartCount }) => {
+const Header = () => {
     const navigate = useNavigate();
     const username = localStorage.getItem("username") || "Guest";
     const role = localStorage.getItem("role") || "User";
+    const [cartCount, setCartCount] = useState(0);
+
+    useEffect(() => {
+        const fetchCartCount = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                if (!token) throw new Error("User not authenticated.");
+
+                const response = await axios.get("http://localhost:8000/api/cart", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                const totalItems = response.data.reduce((sum, item) => sum + item.quantity, 0);
+                setCartCount(totalItems);
+            } catch (err) {
+                console.error("Failed to fetch cart count:", err);
+            }
+        };
+
+        fetchCartCount();
+    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -22,10 +44,10 @@ const Header = ({ cartCount }) => {
             </div>
             
             {/* Show cart only for customers */}
-            {role === "customer" && cartCount > 0 && (
-                <div style={styles.cart}>
-                    <span style={styles.cartCount}>{cartCount}</span>
-                </div>
+            {role === "customer" && (
+                <button style={styles.cart} onClick={() => navigate("/cart")}>
+                    🛒 <span style={styles.cartCount}>{cartCount}</span>
+                </button>
             )}
         </header>
     );
@@ -56,19 +78,22 @@ const styles = {
     },
     cart: {
         position: "relative",
-        display: "inline-block",
+        display: "flex",
+        alignItems: "center",
+        gap: "5px",
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        color: "white",
+        fontSize: "18px",
     },
     cartCount: {
-        position: "absolute",
-        top: "-5px",
-        right: "-5px",
         backgroundColor: "red",
         color: "white",
         borderRadius: "50%",
-        width: "20px",
-        height: "20px",
-        textAlign: "center",
-        fontSize: "12px",
+        padding: "5px 10px",
+        fontSize: "14px",
+        fontWeight: "bold",
     },
 };
 

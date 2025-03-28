@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
-import EmployeeDashboard from "./EmployeeDashboard";
+import EmployeeDashboard from "./Employee/EmployeeDashboard";
+import CustomerDashboard from "./Customer/CustomerDashboard";
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -21,7 +22,7 @@ const Dashboard = () => {
         setUser({ username: storedUsername, role: storedRole });
 
         if (storedRole === "customer") {
-            setCartCount(3);
+            setCartCount(3); // Sample cart count, replace with actual data fetching
         }
     }, [navigate]);
 
@@ -34,6 +35,8 @@ const Dashboard = () => {
 
                 {user.role === "employee" ? (
                     <EmployeeDashboard />
+                ) : user.role === "customer" ? (
+                    <CustomerDashboard />
                 ) : (
                     <p>Loading content...</p>
                 )}
