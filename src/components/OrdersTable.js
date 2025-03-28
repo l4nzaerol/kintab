@@ -4,19 +4,35 @@ import axios from "axios";
 
 const OrdersTable = () => {
     const [orders, setOrders] = useState([]);
+    const [filteredOrders, setFilteredOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [orderItems, setOrderItems] = useState([]);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [dateError, setDateError] = useState("");
 
     useEffect(() => {
         fetchOrders();
     }, []);
 
-    const handleUpdateStatus = (order) => {
-        setSelectedOrder(order);
-        setShowModal(true);
-    };
+    useEffect(() => {
+        if (!startDate || !endDate || dateError) {
+            setFilteredOrders(orders);
+            return;
+        }
+
+        const start = new Date(startDate).setHours(0, 0, 0, 0);
+        const end = new Date(endDate).setHours(23, 59, 59, 999);
+
+        const filtered = orders.filter((order) => {
+            const orderDate = new Date(order.checkout_date).getTime();
+            return orderDate >= start && orderDate <= end;
+        });
+
+        setFilteredOrders(filtered);
+    }, [startDate, endDate, orders, dateError]);
 
     const fetchOrders = async () => {
         try {
@@ -25,10 +41,33 @@ const OrdersTable = () => {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setOrders(response.data);
+            setFilteredOrders(response.data);
         } catch (error) {
             console.error("Error fetching orders:", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleStartDateChange = (e) => {
+        const newStartDate = e.target.value;
+        setStartDate(newStartDate);
+
+        if (endDate && newStartDate > endDate) {
+            setDateError("Start date cannot be later than end date.");
+        } else {
+            setDateError("");
+        }
+    };
+
+    const handleEndDateChange = (e) => {
+        const newEndDate = e.target.value;
+        setEndDate(newEndDate);
+
+        if (startDate && newEndDate < startDate) {
+            setDateError("End date cannot be earlier than start date.");
+        } else {
+            setDateError("");
         }
     };
 
@@ -38,20 +77,12 @@ const OrdersTable = () => {
             const response = await axios.get(`http://localhost:8000/api/orders/${orderId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-    
-            console.log("Order Data:", response.data); // Debugging
-    
-            if (response.data.items) {
-                setOrderItems(response.data.items);
-            } else {
-                setOrderItems([]);
-            }
+
+            setOrderItems(response.data.items || []);
         } catch (error) {
             console.error("Error fetching order items:", error);
         }
     };
-    
-    
 
     const handleRowClick = (order) => {
         setSelectedOrder(order);
@@ -62,6 +93,30 @@ const OrdersTable = () => {
     return (
         <div>
             <h4>Orders</h4>
+
+            {/* Date Filter Inputs */}
+            <div className="mb-3">
+                <h4>Filter</h4>
+                <label>Start Date:</label>
+                <input 
+                    type="date" 
+                    className="form-control" 
+                    value={startDate} 
+                    onChange={handleStartDateChange} 
+                />
+
+                <label className="mt-2">End Date:</label>
+                <input 
+                    type="date" 
+                    className="form-control" 
+                    value={endDate} 
+                    onChange={handleEndDateChange} 
+                    min={startDate} // Prevents selecting an earlier end date
+                />
+
+                {dateError && <p className="text-danger mt-2">{dateError}</p>}
+            </div>
+
             {loading ? (
                 <p>Loading orders...</p>
             ) : (
@@ -76,7 +131,7 @@ const OrdersTable = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {orders.map((order) => (
+                        {filteredOrders.map((order) => (
                             <tr key={order.id} onClick={() => handleRowClick(order)} style={{ cursor: "pointer" }}>
                                 <td>{order.id}</td>
                                 <td>${order.total_price}</td>
@@ -84,7 +139,7 @@ const OrdersTable = () => {
                                 <td>{order.status}</td>
                                 <td>
                                     {order.status !== "completed" && (
-                                        <button className="btn btn-warning btn-sm" onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order); }}>
+                                        <button className="btn btn-warning btn-sm" onClick={(e) => { e.stopPropagation(); }}>
                                             Mark as Complete
                                         </button>
                                     )}
@@ -113,11 +168,10 @@ const OrdersTable = () => {
                                 <h5>Order Items</h5>
                                 {orderItems.length > 0 ? (
                                     <ul>
-                                    {orderItems.map((item) => (
-                                        <li key={item.id}>{item.product?.name || "Unknown Product"} - {item.quantity} x ${item.price}</li>
-                                    ))}
-                                </ul>
-                                
+                                        {orderItems.map((item) => (
+                                            <li key={item.id}>{item.product?.name || "Unknown Product"} - {item.quantity} x ${item.price}</li>
+                                        ))}
+                                    </ul>
                                 ) : (
                                     <p>No items found.</p>
                                 )}
