@@ -37,7 +37,7 @@ const OrderTable = () => {
                     <th>Order ID</th>
                     <th>Product</th>
                     <th>Quantity</th>
-                    <th>Price</th>
+                    <th>Total Price</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -49,7 +49,7 @@ const OrderTable = () => {
                                 <td>{order.id}</td>
                                 <td>{item.product?.name || "Unknown Product"}</td>
                                 <td>{item.quantity}</td>
-                                <td>₱{item.product?.price || 0}</td>
+                                <td>₱{(item.product?.price * item.quantity) || 0}</td>
                                 <td>{order.status}</td>
                             </tr>
                         ))

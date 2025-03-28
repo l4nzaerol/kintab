@@ -111,8 +111,7 @@ const OrdersTable = () => {
       console.error("Error fetching order items:", error);
     }
   };
-
-  const handleRowClick = (order) => {
+  const handleViewDetails = (order) => {
     setSelectedOrder(order);
     fetchOrderItems(order.id);
     setShowModal(true);
@@ -122,7 +121,6 @@ const OrdersTable = () => {
     <div>
       <h4>Orders</h4>
 
-      {/* Date Filter Inputs */}
       <div className="mb-3">
         <h4>Filter</h4>
         <label>Start Date:</label>
@@ -139,7 +137,7 @@ const OrdersTable = () => {
           className="form-control"
           value={endDate}
           onChange={handleEndDateChange}
-          min={startDate} // Prevents selecting an earlier end date
+          min={startDate}
         />
 
         {dateError && <p className="text-danger mt-2">{dateError}</p>}
@@ -152,7 +150,7 @@ const OrdersTable = () => {
           <thead>
             <tr>
               <th>ID</th>
-              <th>Total Price</th>
+              <th>Price</th>
               <th>Checkout Date</th>
               <th>Status</th>
               <th>Action</th>
@@ -160,13 +158,9 @@ const OrdersTable = () => {
           </thead>
           <tbody>
             {filteredOrders.map((order) => (
-              <tr
-                key={order.id}
-                onClick={() => handleRowClick(order)}
-                style={{ cursor: "pointer" }}
-              >
+              <tr key={order.id}>
                 <td>{order.id}</td>
-                <td>₱{order.total_price}</td>
+                <td>₱{parseFloat(order.total_price).toFixed(2)}</td>
                 <td>
                   {order.checkout_date
                     ? new Date(order.checkout_date).toLocaleString()
@@ -174,17 +168,19 @@ const OrdersTable = () => {
                 </td>
                 <td>{order.status}</td>
                 <td>
+                  <button
+                    className="btn btn-info btn-sm me-2"
+                    onClick={() => handleViewDetails(order)}
+                  >
+                    View Details
+                  </button>
                   {order.status !== "completed" && (
                     <button
-                    className="btn btn-warning btn-sm"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent row click event
-                      handleMarkAsComplete(order);
-                    }}
-                  >
-                    Mark as Complete
-                  </button>
-                  
+                      className="btn btn-warning btn-sm"
+                      onClick={() => handleMarkAsComplete(order)}
+                    >
+                      Mark as Complete
+                    </button>
                   )}
                 </td>
               </tr>
@@ -199,37 +195,21 @@ const OrdersTable = () => {
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">
-                  Order #{selectedOrder.id} Details
-                </h5>
+                <h5 className="modal-title">Order #{selectedOrder.id} Details</h5>
                 <button
                   type="button"
-                  className="close"
+                  className="btn-close"
                   onClick={() => setShowModal(false)}
-                >
-                  &times;
-                </button>
+                />
               </div>
               <div className="modal-body">
-                <p>
-                  <strong>Total Price:</strong> ${selectedOrder.total_price}
-                </p>
-                <p>
-                  <strong>Checkout Date:</strong>{" "}
-                  {selectedOrder.checkout_date
-                    ? new Date(selectedOrder.checkout_date).toLocaleString()
-                    : "N/A"}
-                </p>
-                <p>
-                  <strong>Status:</strong> {selectedOrder.status}
-                </p>
                 <h5>Order Items</h5>
                 {orderItems.length > 0 ? (
                   <ul>
                     {orderItems.map((item) => (
                       <li key={item.id}>
-                        {item.product?.name || "Unknown Product"} -{" "}
-                        {item.quantity} x ${item.price}
+                        {item.product?.name || "Unknown Product"} - ₱
+                        {(item.product?.price * item.quantity) || 0}
                       </li>
                     ))}
                   </ul>
@@ -275,7 +255,7 @@ const OrdersTable = () => {
                   {orderItems.map((item) => (
                     <li key={item.id}>
                       {item.product?.name || "Unknown Product"} -{" "}
-                      {item.quantity} x ₱{item.price}
+                      ₱{(item.product?.price * item.quantity) || 0}
                     </li>
                   ))}
                 </ul>

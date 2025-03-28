@@ -149,6 +149,7 @@ const totalPrice = cartItems
       <table className="table">
         <thead>
           <tr>
+            <th></th>
             <th>Product</th>
             <th>Price</th>
             <th>Quantity</th>
