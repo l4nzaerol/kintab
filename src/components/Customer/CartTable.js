@@ -67,50 +67,61 @@ const totalPrice = cartItems
 
   const handleCheckout = async () => {
     if (!address.trim()) {
-        alert("Please enter your address.");
-        return;
+      alert("Please enter your address.");
+      return;
     }
     if (!contact.trim()) {
-        alert("Please enter your contact number.");
-        return;
+      alert("Please enter your contact number.");
+      return;
     }
     if (!paymentMethod) {
-        alert("Please select a payment method.");
-        return;
+      alert("Please select a payment method.");
+      return;
     }
-
+  
     try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("User not authenticated.");
-            return;
-        }
-
-        const response = await axios.post(
-            "http://localhost:8000/api/checkout",
-            { address, contact, paymentMethod }, // Sending data for simulation
-            { headers: { Authorization: `Bearer ${token}` } }
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("User not authenticated.");
+        return;
+      }
+  
+      // Prepare data with only selected items
+      const selectedCartItems = cartItems.filter((item) =>
+        selectedItems.includes(item.id)
+      );
+  
+      const response = await axios.post(
+        "http://localhost:8000/api/checkout",
+        { address, contact, paymentMethod, items: selectedCartItems },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      if (response.status === 200) {
+        alert("Checkout successful! Order ID: " + response.data.order_id);
+  
+        // Keep only unselected items in the cart
+        const remainingItems = cartItems.filter(
+          (item) => !selectedItems.includes(item.id)
         );
-
-        if (response.status === 200) {
-            alert("Checkout successful! Order ID: " + response.data.order_id);
-            setCartItems([]); // Clear the cart in frontend
-            setShowSummary(false);
-            setCheckoutStep(1);
-
-            // Reset form fields (since it's a simulation)
-            setAddress("");
-            setContact("");
-            setPaymentMethod("");
-        } else {
-            alert(response.data.message || "Failed to checkout.");
-        }
+        setCartItems(remainingItems);
+  
+        // Clear selection and reset form
+        setSelectedItems([]);
+        setShowSummary(false);
+        setCheckoutStep(1);
+        setAddress("");
+        setContact("");
+        setPaymentMethod("");
+      } else {
+        alert(response.data.message || "Failed to checkout.");
+      }
     } catch (error) {
-        console.error("Checkout error:", error);
-        alert(error.response?.data?.message || "An error occurred during checkout.");
+      console.error("Checkout error:", error);
+      alert(error.response?.data?.message || "An error occurred during checkout.");
     }
-};
-
+  };
+  
 
 
   if (loading) return <p>Loading cart...</p>;

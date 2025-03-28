@@ -55,6 +55,7 @@ const EmployeeProductsTable = () => {
         }
     };
 
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
