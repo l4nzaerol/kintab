@@ -10,6 +10,7 @@ const EmployeeProductsTable = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [formData, setFormData] = useState({ name: "", description: "", price: "", stock: "", image: "" });
     const [deleteId, setDeleteId] = useState(null);
+    const [deleteError, setDeleteError] = useState("");
     
     useEffect(() => {
         fetchProducts();
@@ -36,6 +37,7 @@ const EmployeeProductsTable = () => {
 
     const handleDelete = (id) => {
         setDeleteId(id);
+        setDeleteError("");
         setShowDeleteModal(true);
     };
 
@@ -48,6 +50,7 @@ const EmployeeProductsTable = () => {
             setProducts(products.filter((product) => product.id !== deleteId));
             setShowDeleteModal(false);
         } catch (error) {
+            setDeleteError("Error: This product is linked to an order and cannot be deleted.");
             console.error("Error deleting product:", error);
         }
     };
@@ -104,6 +107,8 @@ const EmployeeProductsTable = () => {
                     </tbody>
                 </table>
             )}
+            {/* Error Message */}
+            {deleteError && <div className="alert alert-danger mt-2">{deleteError}</div>}
             {/* Edit Modal */}
             {showEditModal && (
                 <div className="modal show d-block" tabIndex="-1">

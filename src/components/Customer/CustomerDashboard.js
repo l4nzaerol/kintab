@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
+import { motion } from "framer-motion";
+import { Spinner } from "react-bootstrap";
 import ProductCatalog from "./ProductCatalog";
 
 const CustomerDashboard = () => {
@@ -30,23 +32,34 @@ const CustomerDashboard = () => {
 
     return (
         <div className="container mt-4">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <h3>Customer Dashboard</h3>
-            </div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+                <div className="text-center mb-4">
+                    <h2 className="text-primary">Customer Dashboard</h2>
+                    <p>Explore our latest products</p>
+                </div>
 
-            {/* Search Bar */}
-            <input
-                type="text"
-                className="form-control mb-3"
-                placeholder="Search for a product..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-            />
+                <div className="d-flex justify-content-center mb-3">
+                    <motion.input
+                        type="text"
+                        className="form-control w-50 shadow-sm"
+                        placeholder="Search for a product..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        whileFocus={{ scale: 1.05 }}
+                    />
+                </div>
 
-            {/* Product Catalog */}
-            <div className="card p-3">
-                {loading ? <p>Loading products...</p> : <ProductCatalog products={filteredProducts} />}
-            </div>
+                <div className="card p-4 shadow-lg">
+                    {loading ? (
+                        <div className="d-flex justify-content-center align-items-center">
+                            <Spinner animation="border" variant="primary" />
+                            <span className="ms-2">Loading products...</span>
+                        </div>
+                    ) : (
+                        <ProductCatalog products={filteredProducts} />
+                    )}
+                </div>
+            </motion.div>
         </div>
     );
 };

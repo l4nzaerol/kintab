@@ -31,7 +31,6 @@ const Dashboard = () => {
             <Header cartCount={user.role === "customer" ? cartCount : null} />
 
             <main>
-                <h2>Welcome, {user.username || "Loading..."}</h2>
 
                 {user.role === "employee" ? (
                     <EmployeeDashboard />

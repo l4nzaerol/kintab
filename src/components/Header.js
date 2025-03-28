@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Navbar, Nav, Button, Badge, Container } from "react-bootstrap";
+import { ShoppingCart, User } from "lucide-react";
 
 const Header = () => {
     const navigate = useNavigate();
@@ -26,6 +28,9 @@ const Header = () => {
         };
 
         fetchCartCount();
+        const interval = setInterval(fetchCartCount, 1000);
+ 
+         return () => clearInterval(interval); // Cleanup on unmount
     }, []);
 
     const handleLogout = () => {
@@ -36,65 +41,31 @@ const Header = () => {
     };
 
     return (
-        <header style={styles.header}>
-            <h1>My React App</h1>
-            <div style={styles.userInfo}>
-                <p>Welcome, {username} ({role})</p>
-                <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
-            </div>
-            
-            {/* Show cart only for customers */}
-            {role === "customer" && (
-                <button style={styles.cart} onClick={() => navigate("/cart")}>
-                    🛒 <span style={styles.cartCount}>{cartCount}</span>
-                </button>
-            )}
-        </header>
+        <Navbar bg="dark" variant="dark" expand="lg" className="shadow-lg p-3 mb-3 rounded" style={{ background: "linear-gradient(90deg, #2b2d42, #43465c)" }}>
+            <Container>
+                <Navbar.Brand href="/dashboard" className="text-light fw-bold">SmartShop</Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="me-auto">
+                    </Nav>
+                    <Nav className="align-items-center">
+                        <span className="text-light me-3">
+                            <User size={18} className="me-1" />{username}
+                        </span>
+                        {role === "customer" && (
+                            <Button variant="outline-light" className="d-flex align-items-center me-2" onClick={() => navigate("/cart")}> 
+                                <ShoppingCart size={20} />
+                                <Badge bg="danger" className="ms-1">{cartCount}</Badge>
+                            </Button>
+                        )}
+                        <Button variant="outline-danger" onClick={handleLogout}>
+                            Logout
+                        </Button>
+                    </Nav>
+                </Navbar.Collapse>
+            </Container>
+        </Navbar>
     );
-};
-
-const styles = {
-    header: {
-        backgroundColor: "#333",
-        color: "white",
-        padding: "15px",
-        textAlign: "center",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    userInfo: {
-        display: "flex",
-        alignItems: "center",
-        gap: "10px",
-    },
-    logoutButton: {
-        backgroundColor: "#ff4d4d",
-        color: "white",
-        border: "none",
-        padding: "8px 12px",
-        cursor: "pointer",
-        borderRadius: "5px",
-    },
-    cart: {
-        position: "relative",
-        display: "flex",
-        alignItems: "center",
-        gap: "5px",
-        background: "none",
-        border: "none",
-        cursor: "pointer",
-        color: "white",
-        fontSize: "18px",
-    },
-    cartCount: {
-        backgroundColor: "red",
-        color: "white",
-        borderRadius: "50%",
-        padding: "5px 10px",
-        fontSize: "14px",
-        fontWeight: "bold",
-    },
 };
 
 export default Header;
