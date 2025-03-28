@@ -6,6 +6,8 @@ const CartTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showSummary, setShowSummary] = useState(false);
+  const [contact, setContact] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [checkoutStep, setCheckoutStep] = useState(1);
   const [address, setAddress] = useState("");
 
@@ -37,6 +39,19 @@ const CartTable = () => {
   );
 
   const handleCheckout = async () => {
+    if (!address.trim()) {
+        alert("Please enter your address.");
+        return;
+    }
+    if (!contact.trim()) {
+        alert("Please enter your contact number.");
+        return;
+    }
+    if (!paymentMethod) {
+        alert("Please select a payment method.");
+        return;
+    }
+
     try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -46,7 +61,7 @@ const CartTable = () => {
 
         const response = await axios.post(
             "http://localhost:8000/api/checkout",
-            {}, // No need to send additional data since the backend fetches cart items and user info
+            { address, contact, paymentMethod }, // Sending data for simulation
             { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -55,6 +70,11 @@ const CartTable = () => {
             setCartItems([]); // Clear the cart in frontend
             setShowSummary(false);
             setCheckoutStep(1);
+
+            // Reset form fields (since it's a simulation)
+            setAddress("");
+            setContact("");
+            setPaymentMethod("");
         } else {
             alert(response.data.message || "Failed to checkout.");
         }
@@ -63,6 +83,7 @@ const CartTable = () => {
         alert(error.response?.data?.message || "An error occurred during checkout.");
     }
 };
+
 
 
   if (loading) return <p>Loading cart...</p>;
@@ -136,7 +157,31 @@ const CartTable = () => {
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       placeholder="Enter your address"
+                      required
                     />
+
+                    <label>Contact Number:</label>
+                    <input
+                      type="text"
+                      className="form-control mb-2"
+                      value={contact}
+                      onChange={(e) => setContact(e.target.value)}
+                      placeholder="Enter your contact number"
+                      required
+                    />
+
+                    <label>Payment Method:</label>
+                    <select
+                      className="form-control mb-2"
+                      value={paymentMethod}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      required
+                    >
+                      <option value="" disabled>Select a payment method</option>
+                      <option value="Gcash">Gcash</option>
+                      <option value="Maya">Maya</option>
+                      <option value="Credit/Debit Card">Credit/Debit Card</option>
+                    </select>
                   </>
                 )}
               </div>
@@ -166,6 +211,8 @@ const CartTable = () => {
       )}
     </div>
   );
+
+
 };
 
 export default CartTable;
