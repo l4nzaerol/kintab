@@ -150,7 +150,7 @@ const OrdersTable = () => {
           <thead>
             <tr>
               <th>ID</th>
-              <th>Price</th>
+              <th>Total Price</th>
               <th>Checkout Date</th>
               <th>Status</th>
               <th>Action</th>
@@ -159,13 +159,14 @@ const OrdersTable = () => {
           <tbody>
             {filteredOrders.map((order) => (
               <tr key={order.id}>
-                <td>{order.id}</td>
+                <td>{order.id}</td> 
                 <td>₱{parseFloat(order.total_price).toFixed(2)}</td>
                 <td>
-                  {order.checkout_date
-                    ? new Date(order.checkout_date).toLocaleString()
-                    : "N/A"}
-                </td>
+  {order.checkout_date 
+    ? new Date(order.checkout_date).toLocaleString("en-PH", { timeZone: "Asia/Manila" }) 
+    : "N/A"}
+</td>
+
                 <td>{order.status}</td>
                 <td>
                   <button
